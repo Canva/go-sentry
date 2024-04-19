@@ -24,7 +24,7 @@ type IssueAlert struct {
 	CreatedBy   *IssueAlertCreatedBy     `json:"createdBy,omitempty"`
 	Environment *string                  `json:"environment,omitempty"`
 	Projects    []string                 `json:"projects,omitempty"`
-	TaskUUID    *string                  `json:"uuid,omitempty"` // This is actually the UUID of the async task that can be spawned to create the rule
+	TaskUUID    *string                  `json:"-"` // This is actually the UUID of the async task that can be spawned to create the rule
 }
 
 // IssueAlertCreatedBy for defining the rule creator.
