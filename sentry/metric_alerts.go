@@ -24,7 +24,7 @@ type MetricAlert struct {
 	Projects         []string              `json:"projects,omitempty"`
 	Owner            *string               `json:"owner,omitempty"`
 	DateCreated      *time.Time            `json:"dateCreated,omitempty"`
-	TaskUUID         *string               `json:"-"` // This is actually the UUID of the async task that can be spawned to create the metric
+	TaskUUID         *string               `json:"uuid,omitempty"` // This is actually the UUID of the async task that can be spawned to create the metric
 	// Don't `omitempty` because we want to set this to null to force Sentry to register this
 	// metric alert as a static alert when `ComparisonDelta` is empty.
 	// We type this as a float instead of an int because Sentry, server-side, returns a float for this value.
@@ -124,9 +124,15 @@ func (s *MetricAlertsService) Create(ctx context.Context, organizationSlug strin
 			return nil, resp, errors.New("missing task uuid")
 		}
 		// We just received a reference to an async task, we need to check another endpoint to retrieve the metric alert we created
-		return s.getMetricAlertFromMetricAlertTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		alert, resp, err := s.getMetricAlertFromMetricAlertTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		if err != nil {
+			return nil, resp, err
+		}
+		alert.TaskUUID = nil
+		return alert, resp, nil
 	}
 
+	alert.TaskUUID = nil
 	return alert, resp, nil
 }
 

@@ -24,7 +24,7 @@ type IssueAlert struct {
 	CreatedBy   *IssueAlertCreatedBy     `json:"createdBy,omitempty"`
 	Environment *string                  `json:"environment,omitempty"`
 	Projects    []string                 `json:"projects,omitempty"`
-	TaskUUID    *string                  `json:"-"` // This is actually the UUID of the async task that can be spawned to create the rule
+	TaskUUID    *string                  `json:"uuid",omitempty` // This is actually the UUID of the async task that can be spawned to create the rule
 }
 
 // IssueAlertCreatedBy for defining the rule creator.
@@ -103,9 +103,15 @@ func (s *IssueAlertsService) Create(ctx context.Context, organizationSlug string
 			return nil, resp, errors.New("missing task uuid")
 		}
 		// We just received a reference to an async task, we need to check another endpoint to retrieve the issue alert we created
-		return s.getIssueAlertFromTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		alert, resp, err := s.getIssueAlertFromTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		if err != nil {
+			return nil, resp, err
+		}
+		alert.TaskUUID = nil
+		return alert, resp, nil
 	}
 
+	alert.TaskUUID = nil
 	return alert, resp, nil
 }
 
