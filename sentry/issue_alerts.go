@@ -24,7 +24,7 @@ type IssueAlert struct {
 	CreatedBy   *IssueAlertCreatedBy     `json:"createdBy,omitempty"`
 	Environment *string                  `json:"environment,omitempty"`
 	Projects    []string                 `json:"projects,omitempty"`
-	TaskUUID    *string                  `json:"uuid",omitempty` // This is actually the UUID of the async task that can be spawned to create the rule
+	TaskUUID    *string                  `json:"uuid,omitempty"` // This is actually the UUID of the async task that can be spawned to create the rule
 }
 
 // IssueAlertCreatedBy for defining the rule creator.
@@ -109,6 +109,7 @@ func (s *IssueAlertsService) Create(ctx context.Context, organizationSlug string
 		}
 	}
 
+	// Remove task UUID as it's no longer needed, otherwise it will end up in the JSON output.
 	alert.TaskUUID = nil
 	return alert, resp, nil
 }

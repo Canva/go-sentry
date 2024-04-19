@@ -130,6 +130,7 @@ func (s *MetricAlertsService) Create(ctx context.Context, organizationSlug strin
 		}
 	}
 
+	// Remove task UUID as it's no longer needed, otherwise it will end up in the JSON output.
 	alert.TaskUUID = nil
 	return alert, resp, nil
 }
