@@ -124,12 +124,10 @@ func (s *MetricAlertsService) Create(ctx context.Context, organizationSlug strin
 			return nil, resp, errors.New("missing task uuid")
 		}
 		// We just received a reference to an async task, we need to check another endpoint to retrieve the metric alert we created
-		alert, resp, err := s.getMetricAlertFromMetricAlertTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		alert, resp, err = s.getMetricAlertFromMetricAlertTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
 		if err != nil {
 			return nil, resp, err
 		}
-		alert.TaskUUID = nil
-		return alert, resp, nil
 	}
 
 	alert.TaskUUID = nil

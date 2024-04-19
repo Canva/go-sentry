@@ -103,12 +103,10 @@ func (s *IssueAlertsService) Create(ctx context.Context, organizationSlug string
 			return nil, resp, errors.New("missing task uuid")
 		}
 		// We just received a reference to an async task, we need to check another endpoint to retrieve the issue alert we created
-		alert, resp, err := s.getIssueAlertFromTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
+		alert, resp, err = s.getIssueAlertFromTaskDetail(ctx, organizationSlug, projectSlug, *alert.TaskUUID)
 		if err != nil {
 			return nil, resp, err
 		}
-		alert.TaskUUID = nil
-		return alert, resp, nil
 	}
 
 	alert.TaskUUID = nil
